@@ -29,7 +29,7 @@ $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 $startTime = Get-Date
 
 # Specify the name of the record type that you'll be creating
-$LogType = "AseData"
+$LogType = "AseAuditData"
 
 # Specify a field with the created time for the records
 $TimeStampField = "DateValue"
