@@ -9,8 +9,11 @@
 .EXAMPLE
 #>
 
-$NSGRG=Get-AutomationVariable -Name 'nsgRG'
-$NSGNAME=Get-AutomationVariable -Name 'nsgName'
+
+$ErrorActionPreference = 'Continue'
+ 
+$nsgRgName=Get-AutomationVariable -Name 'nsgRG'
+$nsgName=Get-AutomationVariable -Name 'nsgName'
 $location= Get-AutomationVariable -Name 'location'
 
 $clientId       =  Get-AutomationVariable -Name 'clientId'
@@ -25,22 +28,20 @@ $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 
 $startTime = Get-Date
 
-$nsgRgName = 'tsublab_RG-CanC-NSGTest-Lab-NSG'
-$nsgName = 'AceV2NSG-TestAseName-nsg-v1'
-
 # Specify the name of the record type that you'll be creating
 $LogType = "AseAuditData"
 
 # Specify a field with the created time for the records
 $TimeStampField = "DateValue"
 
+
+
 # Service Principal Credentials
 # We are not using the RunAs Account
 $password = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $clientId, $password 
 
-"Login to the tenant"
-Add-AzureRmAccount -Credential $credential -ServicePrincipal -TenantId $tenantId -Subscription $subscriptionId
+Set-AzureRmContext -SubscriptionId $subscriptionId -TenantId $tenantID
 
 $tokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $tenantId 
 $armUri = "https://management.azure.com/";
@@ -132,20 +133,19 @@ function AddNSGRule ($ips, $name, $direction, $priority, $portRange) {
         $ruleName="$name-$direction"
         $nsg | Add-AzureRmNetworkSecurityRuleConfig -Name $ruleName -Description $name -Access Allow -Protocol * -Direction $direction -Priority $priority `
             -SourceAddressPrefix VirtualNetwork -SourcePortRange * `
-            -DestinationAddressPrefix $ips -DestinationPortRange $portRange | Out-Null
+            -DestinationAddressPrefix $ips -DestinationPortRange $portRange
   }
   else
   {
         $ruleName="$name-$direction"
         $nsg | Add-AzureRmNetworkSecurityRuleConfig -Name $ruleName -Description $name -Access Allow -Protocol * -Direction $direction -Priority $priority `
             -SourceAddressPrefix $ips -SourcePortRange * `
-            -DestinationAddressPrefix VirtualNetwork -DestinationPortRange $portRange | Out-Null
+            -DestinationAddressPrefix VirtualNetwork -DestinationPortRange $portRange
   }
 }
 
-
 "Getting the ASE Resource"
-$he = Get-AzureRmResource -ResourceGroupName $hostingEnvironmentRG -ResourceType Microsoft.Web/hostingEnvironments -ResourceName $hostingEnvironmentName -ApiVersion 2016-09-01
+$he = Get-AzureRmResource -ResourceType "Microsoft.Web/hostingEnvironments" -ResourceGroup $hostingEnvironmentRG -ResourceName $hostingEnvironmentName
 
 if (-not $he) { throw "No hosting environment found"}
 
@@ -205,7 +205,7 @@ $nsg = Get-AzureRmNetworkSecurityGroup -ResourceGroupName $nsgRgName -Name $nsgN
 if (-not $nsg)
 {
     "Creating Nsg Config"
-    $nsg = New-AzureRmNetworkSecurityGroup -ResourceGroupName $nsgRgName -Name $nsgName -Location $location
+    $nsg = New-AzureRmNetworkSecurityGroup -ResourceGroupName $nsgRgName -Name $nsgName -Location $location -ErrorAction "Stop"
     $nsgStatus = "Created"
     $nsgCreated = $true
 }
@@ -303,8 +303,8 @@ if ($nsgCreated -or $aseChanged)
     $p=150
     AddNSGRule -ips ($outbound | where description -eq "Azure management" | select endpoints -ExpandProperty endpoints) -regionCode $regionCode -name "Azure-Management" -priority $p -direction "Inbound" -portRange "454-455"
 
-    "here we go"
-    $nsg | Set-AzureRmNetworkSecurityGroup
+    $nsg
+    $nsg | Set-AzureRmNetworkSecurityGroup -ErrorAction Stop
     $nsg
 }
 
@@ -319,7 +319,7 @@ $obj | add-member Noteproperty NsgInterfaceCount $nsg.NetworkInterfaces.Count
 $obj | add-member Noteproperty AseChanges $aseChanged
 $obj | add-member Noteproperty NsgCreated $nsgCreated
 
-$obj | add-member Noteproperty RuntimeSeconds (NEW-TIMESPAN –Start $startTime –End (Get-Date)).TotalSeconds
+$obj | add-member Noteproperty RuntimeSeconds (NEW-TIMESPAN â€“Start $startTime â€“End (Get-Date)).TotalSeconds
 $json = $obj | ConvertTo-Json
 
 "Posting data to OMS Workspace"
