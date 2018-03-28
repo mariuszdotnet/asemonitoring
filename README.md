@@ -13,12 +13,15 @@ Will update NSG based on values provided from API calls to the ASE
 		c) Generate a Key => [clientSecret]
 		d) Save the [clientSecret] for later adding to the automation variables
 2) Get your [tenentId]
+	This can be done from PowerShell
+		Get-AzureRmSubscription
 3) Get the [subscriptionId] where the App Service Environment (ase) is homed
 4) Create RG for workspace and automation account
 5) Create Workspace
 	Get [WorkspaceId] and [WorkspaceKey]
 6) Create Automation Account
 	No to Create RunAsAccount
+	NOTE: It appears that we need to have a runas account to properly execute these runbooks. Investigating
 	Import Modules
 		AzureRM.Profile
 		AzureRm.Network
