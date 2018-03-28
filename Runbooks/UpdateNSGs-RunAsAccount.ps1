@@ -12,8 +12,8 @@
 
 $ErrorActionPreference = 'Continue'
  
-$nsgRgName=Get-AutomationVariable -Name 'nsgRG'
-$nsgName=Get-AutomationVariable -Name 'nsgName'
+$NSGRG=Get-AutomationVariable -Name 'nsgRG'
+$NSGNAME=Get-AutomationVariable -Name 'nsgName'
 $location= Get-AutomationVariable -Name 'location'
 
 $clientId       =  Get-AutomationVariable -Name 'clientId'
@@ -27,6 +27,9 @@ $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 
 
 $startTime = Get-Date
+
+$nsgRgName = 'tsublab_RG-CanC-NSGTest-Lab-NSG'
+$nsgName = 'AceV2NSG-TestAseName-nsg-v1'
 
 # Specify the name of the record type that you'll be creating
 $LogType = "AseAuditData"
@@ -242,7 +245,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.SourceAddressPrefix | Sort-Object) -ReferenceObject ($in.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"}
         }
 
@@ -254,7 +257,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.DestinationAddressPrefix | Sort-Object) -ReferenceObject ($in.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"; $comp}
         }
 
@@ -271,7 +274,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.SourceAddressPrefix | Sort-Object) -ReferenceObject ($out.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"}
         }
 
@@ -283,7 +286,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.DestinationAddressPrefix | Sort-Object) -ReferenceObject ($out.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"; $comp}
         }
 
@@ -302,11 +305,9 @@ if ($nsgCreated -or $aseChanged)
     $p=$p+50
     AddNSGRule -ips ($outbound | where description -eq "Azure management" | select endpoints -ExpandProperty endpoints) -regionCode $regionCode -name "Azure-Management" -priority $p -direction "Outbound" -portRange "*"
 
-    # Need to determine if this is need for East Central or East US 2
-    # It may be another IP :(
     # this is for the metrics
-    #$p=$p+50
-    #AddNSGRule -ips @("104.45.230.69/32") -regionCode $regionCode -name "Metrics" -priority $p -direction "Outbound" -portRange "*"
+    $p=$p+50
+    AddNSGRule -ips @("104.45.230.69/32") -regionCode $regionCode -name "Metrics" -priority $p -direction "Outbound" -portRange "*"
 
 
     $p=1000
