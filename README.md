@@ -9,7 +9,40 @@ TODO: Guide users through getting your code up and running on their own system. 
 4.	API references
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+Create an App Registration / Service Principal
+	Create a Key =[AppKey]
+	Get [ApplicationId] and Key for later use
+	Permissions
+		Read at the subscription
+		Contributor at NSG RG
+Get your [tenentId]
+Get the [subscriptionId] where the App Service Environment (ase) is homed
+Create RG for workspace and automation account
+Create Workspace
+	Get [WorkspaceId] and [WorkspaceKey]
+	a997e25a-6eaf-4400-86fc-1ee923e22ca6
+	euSWTIDtR0eHggCbs2X5rshzZI5r1c6LjKlRiR0Am4cIKa4yDffUpWBXtl78vqqAaW3AfupDDt3SjaDzsF/WDQ==
+Create Automation Account
+	No to Create RunAsAccount
+Import the Runbooks
+Publish the Runbooks (For Each)
+	1) Navigate to
+	2) Edit
+	3) Publish
+Create the Variables
+	1) clientId => [ApplicationId]
+	2) clientSecret => [AppKey]
+	3) workspaceId => [WorkspaceId]
+	4) workspaceKey => [WorkspaceKey]
+	5) tenantId => [tenantId]
+	6) subscriptionId => [subscriptionId]
+1. Create Automation Schedules
+	1) Nav to Runbook
+	2) Schedule
+	3) Link
+	4) Create
+		a. Name => UpdateNsgSchedule
+		b. Recurring
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
