@@ -320,9 +320,7 @@ if ($nsgCreated -or $aseChanged)
     $p=150
     AddNSGRule -ips ($outbound | where description -eq "Azure management" | select endpoints -ExpandProperty endpoints) -regionCode $regionCode -name "Azure-Management" -priority $p -direction "Inbound" -portRange "454-455"
 
-    $nsg
     $nsg | Set-AzureRmNetworkSecurityGroup -ErrorAction Stop
-    $nsg
 }
 
 $obj | add-member Noteproperty AseName $he.Name
