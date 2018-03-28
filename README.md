@@ -45,6 +45,15 @@ Will update NSG based on values provided from API calls to the ASE
 	4) Create
 		a. Name => UpdateNsgSchedule
 		b. Recurring
+	5) Save
+11) Import the OMS View
+	1) Navigate to the OMS Workspace
+	2) Click '+'
+	3) Select 'Import'
+	4) Browse to the 'Ase Monitoring (6 Hours).omsview' view
+	5) Select and Click Open
+	6) Click 'Save' 
+12)  
 		
 
 # Contribute
