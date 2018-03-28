@@ -10,7 +10,7 @@
 #>
 
 
-$ErrorActionPreference = 'Continue'
+$ErrorActionPreference = 'SilentlyContinue'
  
 $nsgRgName=Get-AutomationVariable -Name 'nsgRG'
 $nsgName=Get-AutomationVariable -Name 'nsgName'
@@ -25,23 +25,19 @@ $hostingEnvironmentRG = Get-AutomationVariable -Name 'hostingEnvironmentRG'
 $hostingEnvironmentName = Get-AutomationVariable -Name 'hostingEnvironmentName'
 $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 
-
-$startTime = Get-Date
-
 # Specify the name of the record type that you'll be creating
-$LogType = "AseAuditData"
+$LogType = "AseData"
 
 # Specify a field with the created time for the records
 $TimeStampField = "DateValue"
-
-
 
 # Service Principal Credentials
 # We are not using the RunAs Account
 $password = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $clientId, $password 
 
-Set-AzureRmContext -SubscriptionId $subscriptionId -TenantId $tenantID
+"Login to the tenant"
+Add-AzureRmAccount -Credential $credential -ServicePrincipal -TenantId $tenantId -Subscription $subscriptionId
 
 $tokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $tenantId 
 $armUri = "https://management.azure.com/";
@@ -144,10 +140,10 @@ function AddNSGRule ($ips, $name, $direction, $priority, $portRange) {
   }
 }
 
-"Getting the ASE Resource"
-$he = Get-AzureRmResource -ResourceType "Microsoft.Web/hostingEnvironments" -ResourceGroup $hostingEnvironmentRG -ResourceName $hostingEnvironmentName
 
-if (-not $he) { throw "No hosting environment found"}
+"Getting the ASE Resource"
+$he = $null
+$he = Find-azurermresource -ResourceType "Microsoft.Web/hostingEnvironments" -ResourceGroupNameEquals $hostingEnvironmentRG -ResourceNameEquals $hostingEnvironmentName | select -First 1 -Wait
 
 "Processing $($he.Name)"
 
@@ -204,6 +200,7 @@ $aseChanged = $false
 $nsg = Get-AzureRmNetworkSecurityGroup -ResourceGroupName $nsgRgName -Name $nsgName -ErrorAction SilentlyContinue
 if (-not $nsg)
 {
+    "NSG Not Found"
     "Creating Nsg Config"
     $nsg = New-AzureRmNetworkSecurityGroup -ResourceGroupName $nsgRgName -Name $nsgName -Location $location -ErrorAction "Stop"
     $nsgStatus = "Created"
@@ -319,7 +316,7 @@ $obj | add-member Noteproperty NsgInterfaceCount $nsg.NetworkInterfaces.Count
 $obj | add-member Noteproperty AseChanges $aseChanged
 $obj | add-member Noteproperty NsgCreated $nsgCreated
 
-$obj | add-member Noteproperty RuntimeSeconds (NEW-TIMESPAN â€“Start $startTime â€“End (Get-Date)).TotalSeconds
+$obj | add-member Noteproperty RuntimeSeconds (NEW-TIMESPAN –Start $startTime –End (Get-Date)).TotalSeconds
 $json = $obj | ConvertTo-Json
 
 "Posting data to OMS Workspace"
