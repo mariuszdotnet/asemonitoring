@@ -302,9 +302,11 @@ if ($nsgCreated -or $aseChanged)
     $p=$p+50
     AddNSGRule -ips ($outbound | where description -eq "Azure management" | select endpoints -ExpandProperty endpoints) -regionCode $regionCode -name "Azure-Management" -priority $p -direction "Outbound" -portRange "*"
 
+    # Need to determine if this is need for East Central or East US 2
+    # It may be another IP :(
     # this is for the metrics
-    $p=$p+50
-    AddNSGRule -ips @("104.45.230.69/32") -regionCode $regionCode -name "Metrics" -priority $p -direction "Outbound" -portRange "*"
+    #$p=$p+50
+    #AddNSGRule -ips @("104.45.230.69/32") -regionCode $regionCode -name "Metrics" -priority $p -direction "Outbound" -portRange "*"
 
 
     $p=1000
