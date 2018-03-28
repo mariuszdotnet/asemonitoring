@@ -22,6 +22,10 @@ TODO: Guide users through getting your code up and running on their own system. 
 	Get [WorkspaceId] and [WorkspaceKey]
 6) Create Automation Account
 	No to Create RunAsAccount
+	Import Modules
+		AzureRM.Profile
+		AzureRm.Network
+		AzureRm.Resources
 7) Import the Runbooks
 8) Publish the Runbooks (For Each)
 	1) Navigate to
