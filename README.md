@@ -33,6 +33,11 @@ Will update NSG based on values provided from API calls to the ASE
 	4) workspaceKey => [WorkspaceKey]
 	5) tenantId => [tenantId]
 	6) subscriptionId => [subscriptionId]
+	7) nsgName => [name of nsg to create or modify]
+	8) nsgRgName => [Name of resource group that contains the nsg]
+	9) location => the Azure location, eastus, canadacentral, canadaeast, etc
+	10) hostingEnvironmentName => THe name of the ASE hosting environment
+	11) hostingEnvironmentRG => The name of the Resource Group containing the hosting environment
 10) Create Automation Schedules
 	1) Nav to Runbook
 	2) Schedule
