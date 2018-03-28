@@ -12,8 +12,8 @@
 
 $ErrorActionPreference = 'Continue'
  
-$NSGRG=Get-AutomationVariable -Name 'nsgRG'
-$NSGNAME=Get-AutomationVariable -Name 'nsgName'
+$nsgRgName=Get-AutomationVariable -Name 'nsgRG'
+$nsgName=Get-AutomationVariable -Name 'nsgName'
 $location= Get-AutomationVariable -Name 'location'
 
 $clientId       =  Get-AutomationVariable -Name 'clientId'
@@ -27,9 +27,6 @@ $subscriptionId = Get-AutomationVariable -Name 'subscriptionId'
 
 
 $startTime = Get-Date
-
-$nsgRgName = 'tsublab_RG-CanC-NSGTest-Lab-NSG'
-$nsgName = 'AceV2NSG-TestAseName-nsg-v1'
 
 # Specify the name of the record type that you'll be creating
 $LogType = "AseAuditData"
