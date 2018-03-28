@@ -222,7 +222,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.SourceAddressPrefix | Sort-Object) -ReferenceObject ($in.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"}
         }
 
@@ -234,7 +234,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.DestinationAddressPrefix | Sort-Object) -ReferenceObject ($in.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"; $comp}
         }
 
@@ -251,7 +251,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.SourceAddressPrefix | Sort-Object) -ReferenceObject ($out.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"}
         }
 
@@ -263,7 +263,7 @@ if (-not $nsgCreated)
         else
         {
            $comp = Compare-Object -DifferenceObject ($nsgRule.DestinationAddressPrefix | Sort-Object) -ReferenceObject ($out.endpoints | Sort-Object)
-           $aseChanged = (-not -not $comp)
+           $aseChanged = $aseChanged -or (-not -not $comp)
            if ($aseChanged) {"$rule Changed"; $comp}
         }
 
