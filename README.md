@@ -5,11 +5,13 @@ Will update NSG based on values provided from API calls to the ASE
 
 # Build and Test
 1) Create an App Registration / Service Principal
-	Create a Key =[AppKey]
-	Get [ApplicationId] and Key for later use
-	Permissions
-		Read at the subscription
-		Contributor at NSG RG
+	1) Create a Key =[AppKey]
+		a) Get [ApplicationId] and Key for later use
+		b) Permissions
+			Read at the subscription
+			Contributor at NSG RG
+		c) Generate a Key => [clientSecret]
+		d) Save the [clientSecret] for later adding to the automation variables
 2) Get your [tenentId]
 3) Get the [subscriptionId] where the App Service Environment (ase) is homed
 4) Create RG for workspace and automation account
